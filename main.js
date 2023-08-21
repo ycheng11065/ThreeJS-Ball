@@ -1,24 +1,47 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import * as THREE from 'three';
+import './style.css';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+// Scene
+const scene = new THREE.Scene();
 
-setupCounter(document.querySelector('#counter'))
+// Create Sphere
+const geometry = new THREE.SphereGeometry(3, 64, 64);
+const material = new THREE.MeshStandardMaterial({
+  color: '#00ff83',
+});
+const mesh = new THREE.Mesh(geometry, material);
+scene.add(mesh);
+
+// Light
+const light = new THREE.PointLight(0xffffff, 200, 100);
+light.position.set(0, 10, 10);
+scene.add(light);
+
+// Sizes
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+}
+
+// Camera
+const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height);
+camera.position.z = 20;
+scene.add(camera);
+
+// Renderer
+const canvas = document.querySelector('.webgl');
+const renderer = new THREE.WebGLRenderer({ canvas });
+renderer.setSize(sizes.width, sizes.height);
+renderer.render(scene, camera);
+
+
+// Resize
+window.addEventListener('resize', () => {
+  // Update Sizes
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  // Update Camera
+  camera.aspect = sizes.width / sizes.height;
+  renderer.setSize(sizes.width, sizes.height)
+})
